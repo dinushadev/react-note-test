@@ -43,13 +43,27 @@ const AddMeeting = (props) => {
         initialValues: initialValues,
         validationSchema: MeetingSchema,
         onSubmit: (values, { resetForm }) => {
-            
+            AddData();
         },
     });
     const { errors, touched, values, handleBlur, handleChange, handleSubmit, setFieldValue } = formik
 
     const AddData = async () => {
-
+        try {
+            setIsLoding(true);
+            const response = await postApi('api/meeting/add', values);
+            if (response.status === 200) {
+                toast.success('Meeting added successfully');
+                formik.resetForm();
+                fetchData();
+                onClose();
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to add meeting');
+        } finally {
+            setIsLoding(false);
+        }
     };
 
     const fetchAllData = async () => {
